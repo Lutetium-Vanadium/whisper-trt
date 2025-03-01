@@ -379,6 +379,18 @@ class EnBuilder(WhisperTRTBuilder):
         )
         return tokenizer
 
+class NonEnBuilder(WhisperTRTBuilder):
+    @classmethod
+    def get_tokenizer(cls):
+        tokenizer = whisper.tokenizer.get_tokenizer(
+            True,
+            num_languages=99,
+            language="en",
+            task="transcribe",
+        )
+        return tokenizer
+
+
 
 class TinyEnBuilder(EnBuilder):
     model: str = "tiny.en"
@@ -390,18 +402,23 @@ class BaseEnBuilder(EnBuilder):
 
 class SmallEnBuilder(EnBuilder):
     model: str = "small.en"
+
+class LargeV3Turbo(NonEnBuilder):
+    model: str = "large-v3-turbo"
     
 
 MODEL_FILENAMES = {
     "tiny.en": "tiny_en_trt.pth",
     "base.en": "base_en_trt.pth",
-    "small.en": "small_en_trt.pth"
+    "small.en": "small_en_trt.pth",
+    "large-v3-turbo": "large-v3-turbo.pth"
 }
 
 MODEL_BUILDERS = {
     "tiny.en": TinyEnBuilder,
     "base.en": BaseEnBuilder,
-    "small.en": SmallEnBuilder
+    "small.en": SmallEnBuilder,
+    "large-v3-turbo": LargeV3Turbo
 }
 
 def load_trt_model(name: str, path: str | None = None, build: bool = True, verbose: bool = False):
